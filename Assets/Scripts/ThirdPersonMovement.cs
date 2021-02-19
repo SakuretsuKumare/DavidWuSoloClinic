@@ -10,6 +10,7 @@ Brackey's First Person Movement In Unity video https://www.youtube.com/watch?v=_
 public class ThirdPersonMovement : MonoBehaviour
 {
     public CharacterController controller;
+    public Animator anim;
     public Transform cam;
     public float speed = 6f;
     public float turnSmoothTime = 0.1f;
@@ -37,8 +38,12 @@ public class ThirdPersonMovement : MonoBehaviour
         float vertical = Input.GetAxisRaw("Vertical");
         Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
 
+        // Set the Float value of the Animator.
+        float magnitude = direction.magnitude;
+        anim.SetFloat("MoveSpeed", magnitude * speed);
+
         // If our player is moving; more than a speed of 0
-        if (direction.magnitude >= 0.1f)
+        if (magnitude >= 0.1f)
         {
             // Gets the angle of the camera and rotates the player to the camera.
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
@@ -55,6 +60,8 @@ public class ThirdPersonMovement : MonoBehaviour
         {
             velocity.y = Mathf.Sqrt(jumpHeight * 2f * -gravity);
         }
+
+        anim.SetBool("isGrounded", isGrounded);
 
         // Player is being affected by gravity.
         velocity.y += gravity * Time.deltaTime;
